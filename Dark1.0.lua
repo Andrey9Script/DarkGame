@@ -1,250 +1,151 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/ahmadsgamer2/Speed-Hub-X/main/ui.lua"))()
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+local Camera = workspace.CurrentCamera
 
-local themes = {
-    Background = Color3.fromRGB(24, 24, 24),
-    Glow = Color3.fromRGB(255, 0, 0),
-    Accent = Color3.fromRGB(45, 45, 45),
-    LightContrast = Color3.fromRGB(20, 20, 20),
-    DarkContrast = Color3.fromRGB(30, 30, 30),
-    TextColor = Color3.fromRGB(255, 255, 255)
-}
-
-local page = library:AddPage("Main", 5012544693)
-local section1 = page:AddSection("Main")
-
-local main_toggle = section1:AddToggle("Main Toggle", nil, function(state)
-    if state then
-        print("Main Toggle is On")
-    else
-        print("Main Toggle is Off")
-    end
-end)
-
-local section2 = page:AddSection("Section 2")
-local textbox = section2:AddTextBox("TextBox", function(value)
-    print("TextBox", value)
-end)
-local dropdown = section2:AddDropdown({"Option 1", "Option 2", "Option 3"}, function(option)
-    print(option)
-end)
-local slider = section2:AddSlider("Slider", 0, 100, function(value)
-    print(value)
-end)
-local button = section2:AddButton("Button", function()
-    print("Button clicked")
-end)
-local section3 = page:AddSection("Section 3")
-
-local colorpicker = section3:AddColorPicker("ColorPicker", function(color)
-    print(color)
-end)
-
-local bindable = section3:AddKeybind("Keybind", Enum.KeyCode.Q, function()
-    print("Keybind Pressed")
-end)
-
-local section4 = page:AddSection("Section 4")
-
-local player = game.Players.LocalPlayer
-
-local player_dropdown = section4:AddDropdown({"WalkSpeed", "JumpPower"}, function(option)
-    local value = tonumber(section4:GetTextbox("Value").Text)
-    if option == "WalkSpeed" then
-        player.Character.Humanoid.WalkSpeed = value
-    elseif option == "JumpPower" then
-        player.Character.Humanoid.JumpPower = value
-    end
-end)
-
-local value_textbox = section4:AddTextbox("Value", function(value)
-    print("Value", value)
-end)
-
-local section5 = page:AddSection("Section 5")
-
-local credits_label = section5:AddLabel("Made by Ahmad#9999", Color3.fromRGB(255, 255, 255))
--- Functions to change color themes
-function changeTheme(theme)
-    for component, color in pairs(theme) do
-        library:SetColor(component, color)
-    end
-end
-
-function updateTheme()
-    local selected_theme = library:GetDropdown("Theme"):GetSelected()
-    if selected_theme == "Theme 1" then
-        changeTheme(themes)
-    elseif selected_theme == "Theme 2" then
-        changeTheme({
-            Background = Color3.fromRGB(255, 255, 255),
-            Glow = Color3.fromRGB(0, 255, 0),
-            Accent = Color3.fromRGB(200, 200, 200),
-            LightContrast = Color3.fromRGB(230, 230, 230),
-            DarkContrast = Color3.fromRGB(210, 210, 210),
-            TextColor = Color3.fromRGB(0, 0, 0)
-        })
-    end
-end
-
--- Main
-changeTheme(themes)
-
-local page = library:AddPage("Main", 5012544693)
-local theme_section = page:AddSection("Theme")
-
-local theme_dropdown = theme_section:AddDropdown({"Theme 1", "Theme 2"}, updateTheme)
-
-local section1 = page:AddSection("Main")
-local main_toggle = section1:AddToggle("Main Toggle", nil, function(state)
-    if state then
-        print("Main Toggle is On")
-    else
-        print("Main Toggle is Off")
-    end
-end)
-
-local section2 = page:AddSection("Section 2")
-local textbox = section2:AddTextBox("TextBox", function(value)
-    print("TextBox", value)
-end)
-local dropdown = section2:AddDropdown({"Option 1", "Option 2", "Option 3"}, function(option)
-    print(option)
-end)
-local slider = section2:AddSlider("Slider", 0, 100, function(value)
-    print(value)
-end)
-local button = section2:AddButton("Button", function()
-    print("Button clicked")
-end)
-
-local section3 = page:AddSection("Section 3")
-local colorpicker = section3:AddColorPicker("ColorPicker", function(color)
-    print(color)
-end)
-
-local bindable = section3:AddKeybind("Keybind", Enum.KeyCode.Q, function()
-    print("Keybind Pressed")
-end)
-
-local section4 = page:AddSection("Section 4")
-local player = game.Players.LocalPlayer
-local player_dropdown = section4:AddDropdown({"WalkSpeed", "JumpPower"}, function(option)
-    local value = tonumber(section4:GetTextbox("Value").Text)
-    if option == "WalkSpeed" then
-        player.Character.Humanoid.WalkSpeed = value
-    elseif option == "JumpPower" then
-        player.Character.Humanoid.JumpPower = value
-    end
-end)
-local value_textbox = section4:AddTextbox("Value", function(value)
-    print("Value", value)
-end)
-
-local section5 = page:AddSection("Section 5")
-local credits_label = section5:AddLabel("Made by Ahmad#9999", Color3.fromRGB(255, 255, 255))
-local gun = "Combat Shotgun"
-local anim = "Cock"
-local delay = 0.4
-
-if not game:IsLoaded() then
-    game.Loaded:Wait()
-end
-
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RemoteEvents = ReplicatedStorage:WaitForChild("Remotes")
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
-local LocalPlayer = game:GetService("Players").LocalPlayer
 
-local function fireGun()
-    local remoteEvent = RemoteEvents:FindFirstChild("GunEvent")
+local Frame = Instance.new("Frame")
+local TextButton = Instance.new("TextButton")
+local UIGradient = Instance.new("UIGradient")
+local Shadow = Instance.new("Frame")
+local ScrollingFrame = Instance.new("ScrollingFrame")
+local UIGridLayout = Instance.new("UIGridLayout")
 
-    if not remoteEvent then
-        return
+local Enabled = false
+
+Frame.Name = "Frame"
+Frame.Parent = CoreGui
+Frame.Active = true
+Frame.Draggable = true
+Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Frame.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Frame.BorderSizePixel = 2
+Frame.Position = UDim2.new(0.397, 0, 0.402, 0)
+Frame.Size = UDim2.new(0, 400, 0, 350)
+
+TextButton.Name = "TextButton"
+TextButton.Parent = Frame
+TextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton.BackgroundTransparency = 1.000
+TextButton.BorderSizePixel = 0
+TextButton.Position = UDim2.new(0, 0, 0, 0)
+TextButton.Size = UDim2.new(0, 400, 0, 50)
+TextButton.Font = Enum.Font.Gotham
+TextButton.Text = "Speed Hub X"
+TextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextButton.TextSize = 22.000
+
+UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(23, 23, 23)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(0, 0, 0))}
+UIGradient.Parent = TextButton
+
+Shadow.Name = "Shadow"
+Shadow.Parent = Frame
+Shadow.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Shadow.BorderSizePixel = 0
+Shadow.Position = UDim2.new(0, 4, 0, 4)
+Shadow.Size = UDim2.new(1, 0, 1, 0)
+
+local function CreateButton(name, func)
+    local Button = Instance.new("TextButton")
+    local UIGradient_2 = Instance.new("UIGradient")
+
+    Button.Name = name
+    Button.Parent = ScrollingFrame
+    Button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Button.BackgroundTransparency = 1.000
+    Button.BorderSizePixel = 0
+    Button.Size = UDim2.new(0, 375, 0, 50)
+    Button.Font = Enum.Font.Gotham
+    Button.Text = name
+    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Button.TextSize = 18.000
+
+    UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(23, 23, 23)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(0, 0, 0))}
+    UIGradient_2.Parent = Button
+    
+    Button.MouseButton1Click:Connect(function()
+        func()
+    end)
+end
+
+ScrollingFrame.Name = "ScrollingFrame"
+ScrollingFrame.Parent = Frame
+ScrollingFrame.Active = true
+ScrollingFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+ScrollingFrame.BorderColor3 = Color3.fromRGB(255, 255, 255)
+ScrollingFrame.BorderSizePixel = 0
+ScrollingFrame.Position = UDim2.new(0.025, 0, 0.175, 0)
+ScrollingFrame.Size = UDim2.new(0, 375, 0, 250)
+ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 1000)
+
+UIGridLayout.Parent = ScrollingFrame
+UIGridLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIGridLayout.CellPadding = UDim2.new(0, 0, 0, 10)
+UIGridLayout.CellSize = UDim2.new(0, 375, 0, 50)
+
+CreateButton("WalkSpeed", function()
+    local Speed = tonumber(prompt("Enter WalkSpeed", LocalPlayer.Character.Humanoid.WalkSpeed))
+    if Speed then
+        LocalPlayer.Character.Humanoid.WalkSpeed = Speed
     end
+end)
 
-    remoteEvent:FireServer(gun, anim, delay)
-end
-
-local function tweenGui(guiObject, tweenInfo, properties)
-    local tween = TweenService:Create(guiObject, tweenInfo, properties)
-    tween:Play()
-end
-
-local function showGui(guiObject, duration)
-    guiObject.Visible = true
-
-    local tweenInfo = TweenInfo.new(duration)
-    local properties = {
-        Position = UDim2.new(0.5, 0, 0.5, 0),
-        BackgroundTransparency = 0.5,
-        BorderSizePixel = 0
-    }
-
-    tweenGui(guiObject, tweenInfo, properties)
-end
-
-local function hideGui(guiObject, duration)
-    local tweenInfo = TweenInfo.new(duration)
-    local properties = {
-        Position = UDim2.new(0.5, 0, -1.5, 0),
-        BackgroundTransparency = 1,
-        BorderSizePixel = 0
-    }
-
-    tweenGui(guiObject, tweenInfo, properties)
-    wait(duration)
-    guiObject.Visible = false
-end
-
-local function onInputBegan(input, gameProcessed)
-    if gameProcessed then
-        return
+CreateButton("JumpPower", function()
+    local Power = tonumber(prompt("Enter JumpPower", LocalPlayer.Character.Humanoid.JumpPower))
+    if Power then
+        LocalPlayer.Character.Humanoid.JumpPower = Power
     end
+end)
 
-    if input.UserInputType == Enum.UserInputType.Keyboard then
-        local keyCode = input.KeyCode
+CreateButton("Gravity", function()
+    local Gravity = tonumber(prompt("Enter Gravity", workspace.Gravity))
+    if Gravity then
+        workspace.Gravity = Gravity
+    end
+end)
 
-        if keyCode == Enum.KeyCode.Q then
-            fireGun()
-        elseif keyCode == Enum.KeyCode.E then
-            local guiObject = script.Parent.MainFrame
-            showGui(guiObject, 0.3)
+CreateButton("Noclip", function()
+    Enabled = not Enabled
+    if Enabled then
+        for _, Part in pairs(LocalPlayer.Character:GetDescendants()) do
+            if Part:IsA("BasePart") then
+                Part.CanCollide = false
+            end
+        end
+    else
+        for _, Part in pairs(LocalPlayer.Character:GetDescendants()) do
+            if Part:IsA("BasePart") then
+                Part.CanCollide = true
+            end
         end
     end
-end
+end)
 
-local function onInputEnded(input, gameProcessed)
-    if gameProcessed then
-        return
+CreateButton("Teleport", function()
+    local Position = Mouse.Hit.Position
+    LocalPlayer.Character:MoveTo(Position)
+end)
+
+CreateButton("Fly", function()
+    local Part = Instance.new("Part", workspace)
+    Part.Anchored = true
+    Part.CanCollide = false
+    Part.Transparency = 1
+    Part.Size = Vector3.new(5, 5, 5)
+    Part.Position = LocalPlayer.Character.HumanoidRootPart.Position
+    local BodyVelocity = Instance.new("BodyVelocity", Part)
+    BodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+    local function Fly()
+        if not Part or not Part.Parent then return end
+        local Direction = Camera.CFrame.lookVector
+        BodyVelocity.Velocity = Direction * 50
+        RunService.RenderStepped:Wait()
+        Fly()
     end
+    Fly()
+end)
 
-    if input.UserInputType == Enum.UserInputType.Keyboard then
-        local keyCode = input.KeyCode
-
-        if keyCode == Enum.KeyCode.E then
-            local guiObject = script.Parent.MainFrame
-            hideGui(guiObject, 0.3)
-        end
-    end
-end
-
-local function onCharacterAdded(character)
-    character:WaitForChild("Humanoid")
-
-    local humanoid = character:WaitForChild("Humanoid")
-    humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
-end
-
-LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
-game:GetService("UserInputService").InputBegan:Connect(onInputBegan)
-game:GetService("UserInputService").InputEnded:Connect(onInputEnded)
-local function onPlayerGuiChanged(player, gui)
-    if gui and gui.Name == "SpeedHubXGui" then
-        local textButton = gui:WaitForChild("MainFrame"):WaitForChild("TextButton")
-        textButton.Activated:Connect(function()
-            fireGun()
-        end)
-    end
-end
-
-game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui").ChildAdded:Connect(onPlayerGuiChanged)
